@@ -13,10 +13,7 @@ use agb::{
             VRamManager,
         },
         Priority, HEIGHT, WIDTH,
-    },
-    fixnum::{FixedNum, Vector2D},
-    input::{self, Button, ButtonController},
-    sound::mixer::Frequency,
+    }, fixnum::{FixedNum, Vector2D}, include_background_gfx, input::{self, Button, ButtonController}, sound::mixer::Frequency
 };
 use alloc::boxed::Box;
 //use sfx::SfxPlayer;
@@ -38,6 +35,7 @@ pub struct VaultLayer {
 
 static GRAPHICS: &Graphics = agb::include_aseprite!("gfx/player.aseprite");
 static ENVIRONMENT_TILES: &Graphics = agb::include_aseprite!("gfx/environment_tiles.aseprite");
+agb::include_background_gfx!(environment_tiles_bgfx, "2ce8f4", background => deduplicate "gfx/environment_tiles.png");
 static TAG_MAP: &TagMap = GRAPHICS.tags();
 static ENVIRONMENT_TAGS: &TagMap = ENVIRONMENT_TILES.tags();
 
@@ -73,9 +71,6 @@ impl<'a> Entity<'a> {
 
 }
 
-
-
-
 pub struct Player<'a> {
     p_entity: Entity<'a>,
     facing: input::Tri,
@@ -99,6 +94,7 @@ impl<'a> Player<'a> {
 pub fn main(mut agb: agb::Gba) -> ! {
 
     let (tiled, mut vram) = agb.display.video.tiled0();
+    vram.set_background_palettes(environment_tiles_bgfx::PALETTES);
 
     let mut splash_screen_background = tiled.background(
         Priority::P0,
@@ -113,6 +109,25 @@ pub fn main(mut agb: agb::Gba) -> ! {
         TileFormat::FourBpp,
         );
 
+
+    let tileset = &environment_tiles_bgfx::background.tiles;
+
+    for y in 0..32u16 {
+        for x in 0..32u16 {
+            world_background.set_tile(
+                &mut vram,
+                (x, y),
+                tileset,
+                environment_tiles_bgfx::background.tile_settings[0],
+            );
+        }
+    }
+
+
+
+    world_background.commit(&mut vram);
+    world_background.set_visible(true);
+    
     
     //what is tilesheet
     //vram.set_background_palettes(tile_sheet::PALETTES);
@@ -133,7 +148,8 @@ pub fn main(mut agb: agb::Gba) -> ! {
     //
 
 
-    title::show_splash_screen(title::SplashScreen::Title, &mut splash_screen_background, &mut vram);
+    //title::show_splash_screen(title::SplashScreen::Title, &mut splash_screen_background, &mut vram);
+
 
     loop {
 
