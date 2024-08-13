@@ -73,6 +73,7 @@ impl<'a> Entity<'a> {
 
 pub struct Player<'a> {
     p_entity: Entity<'a>,
+    is_on_ground: bool,
     facing: input::Tri,
 }
 
@@ -84,7 +85,22 @@ impl<'a> Player<'a> {
 
         Player {
             p_entity,
+            is_on_ground: false,
             facing: input::Tri::Zero,
+        }
+    }
+
+    fn update_frame(
+        &mut self,
+        input: &ButtonController,
+        controller: &'a OamManaged,
+        //timer: i32,
+        ) {
+        
+        match input.x_tri() {
+            input::Tri::Negative => { /*move left*/ },
+            input::Tri::Positive => { /*move right*/ },
+            input::Tri::Zero => { /**/ },
         }
     }
 }
@@ -152,6 +168,15 @@ pub fn main(mut agb: agb::Gba) -> ! {
 
 
     loop {
+    /*
+        world_background.set_tile(
+            &mut vram,
+            (x, y),
+            tileset,
+            environment_tiles_bgfx::background.tile_settings[0],
+        );
+
+    */
 
     }
 
