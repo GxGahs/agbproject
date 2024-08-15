@@ -134,7 +134,7 @@ pub fn main(mut agb: agb::Gba) -> ! {
                 &mut vram,
                 (x, y),
                 tileset,
-                environment_tiles_bgfx::background.tile_settings[0],
+                environment_tiles_bgfx::background.tile_settings[2],
             );
         }
     }
